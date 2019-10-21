@@ -7,7 +7,23 @@ import torchvision.transforms as transforms
 import math
 
 
-nPerson = len(Inds)
+seqRootRGB = 'iLIDS-VID//i-LIDS-VID//sequences//'
+seqRootOF = 'iLIDS-VID//i-LIDS-VID-OF-HVP//sequences//'
+
+print('loading Dataset - ',seqRootRGB,seqRootOF)
+
+from DataPrepare import prepareDataset
+dataset = prepareDataset(seqRootRGB, seqRootOF, '.png',False)
+
+print('dataset loaded')
+
+print('randomizing test/training split')
+
+from DataUtils import partitionDataset,feature_extraction
+trainInds,testInds = partitionDataset(len(dataset),0.5)
+
+
+nPerson = len(testInds)
 
 similarityMatrix = torrch.zero(nPerson, nPerson)
 
@@ -18,9 +34,9 @@ for shift in range(7):
         camAFeatures = torch.DoubleTensor(nPerson, 128)
         
         for person in range(nPerson):
-            seqLen = dataset[Inds[person]][0].shape[0]
+            seqLen = dataset[testInds[person]][0].shape[0]
             
-            seq=dataset[Inds[person]][0][0:seqLen,:,:].squeeze().clone()
+            seq=dataset[testInds[person]][0][0:seqLen,:,:].squeeze().clone()
             
             # Augmentation
             augSeq = torch.zeros(seqLen, 5, 56, 40)
@@ -43,9 +59,9 @@ for shift in range(7):
         camBFeatures = torch.DoubleTensor(nPerson, 128)
         
         for person in range(nPerson):
-            seqLen = dataset[Inds[person]][0].shape[0]
+            seqLen = dataset[testInds[person]][0].shape[0]
             
-            seq=dataset[Inds[person]][0][0:seqLen,:,:].squeeze().clone()
+            seq=dataset[testInds[person]][0][0:seqLen,:,:].squeeze().clone()
             
             # Augmentation
             augSeq = torch.zeros(seqLen, 5, 56, 40)
