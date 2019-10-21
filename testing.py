@@ -1,3 +1,12 @@
+import torch
+import cv2
+import numpy as np
+from torch.autograd import Variable
+import torch.nn as nn
+import torchvision.transforms as transforms
+import math
+
+
 nPerson = len(Inds)
 
 similarityMatrix = torrch.zero(nPerson, nPerson)
